@@ -1,5 +1,3 @@
-Here is the breakdown of your **Quadchecker** project, formatted exactly like the guide you liked. This is designed to help you pass the audit and understand every line.
-
 # 🧩 Project: `quadchecker` — Beginner Guide
 
 -----
