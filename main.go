@@ -8,9 +8,59 @@ import (
 	"strings"
 )
 
-// --- Helper Functions using your "isTopLeft" logic ---
+func main() {
+	// 1. Read input from the pipe
+	reader := bufio.NewReader(os.Stdin)
+	inputBytes, _ := io.ReadAll(reader)
+	input := string(inputBytes)
 
-func CheckQuadA(x, y int) string {
+	if input == "" {
+		fmt.Println("Not a quad function")
+		return
+	}
+
+	// 2. Determine dimensions
+	lines := strings.Split(strings.TrimSuffix(input, "\n"), "\n")
+	y := len(lines)
+	x := 0
+	if y > 0 {
+		x = len(lines[0])
+	}
+
+	if x == 0 || y == 0 {
+		fmt.Println("Not a quad function")
+		return
+	}
+
+	// 3. Compare input against our internal string generators
+	var matches []string
+
+	if input == QuadA(x, y) {
+		matches = append(matches, fmt.Sprintf("[quadA] [%d] [%d]", x, y))
+	}
+	if input == QuadB(x, y) {
+		matches = append(matches, fmt.Sprintf("[quadB] [%d] [%d]", x, y))
+	}
+	if input == QuadC(x, y) {
+		matches = append(matches, fmt.Sprintf("[quadC] [%d] [%d]", x, y))
+	}
+	if input == QuadD(x, y) {
+		matches = append(matches, fmt.Sprintf("[quadD] [%d] [%d]", x, y))
+	}
+	if input == QuadE(x, y) {
+		matches = append(matches, fmt.Sprintf("[quadE] [%d] [%d]", x, y))
+	}
+
+	// 4. Print results
+	if len(matches) == 0 {
+		fmt.Println("Not a quad function")
+	} else {
+		fmt.Println(strings.Join(matches, " || "))
+	}
+}
+
+
+func QuadA(x, y int) string {
 	if x <= 0 || y <= 0 {
 		return ""
 	}
@@ -47,7 +97,7 @@ func CheckQuadA(x, y int) string {
 	return res.String()
 }
 
-func CheckQuadB(x, y int) string {
+func QuadB(x, y int) string {
 	if x <= 0 || y <= 0 {
 		return ""
 	}
@@ -88,7 +138,7 @@ func CheckQuadB(x, y int) string {
 	return res.String()
 }
 
-func CheckQuadC(x, y int) string {
+func QuadC(x, y int) string {
 	if x <= 0 || y <= 0 {
 		return ""
 	}
@@ -110,9 +160,14 @@ func CheckQuadC(x, y int) string {
 			isLeftEdge := isFirstCol && row > 1 && row < y
 			isRightEdge := isLastCol && row > 1 && row < y
 
-			if isTopLeft || isTopRight {
+			// CORRECTED LOGIC: Check explicit corners in order
+			if isTopLeft {
 				res.WriteString("A")
-			} else if isBottomLeft || isBottomRight {
+			} else if isTopRight {
+				res.WriteString("A")
+			} else if isBottomLeft {
+				res.WriteString("C")
+			} else if isBottomRight {
 				res.WriteString("C")
 			} else if isTopEdge || isBottomEdge || isLeftEdge || isRightEdge {
 				res.WriteString("B")
@@ -125,7 +180,7 @@ func CheckQuadC(x, y int) string {
 	return res.String()
 }
 
-func CheckQuadD(x, y int) string {
+func QuadD(x, y int) string {
 	if x <= 0 || y <= 0 {
 		return ""
 	}
@@ -147,9 +202,13 @@ func CheckQuadD(x, y int) string {
 			isLeftEdge := isFirstCol && row > 1 && row < y
 			isRightEdge := isLastCol && row > 1 && row < y
 
-			if isTopLeft || isBottomLeft {
+			if isTopLeft {
 				res.WriteString("A")
-			} else if isTopRight || isBottomRight {
+			} else if isTopRight {
+				res.WriteString("C")
+			} else if isBottomLeft {
+				res.WriteString("A")
+			} else if isBottomRight {
 				res.WriteString("C")
 			} else if isTopEdge || isBottomEdge || isLeftEdge || isRightEdge {
 				res.WriteString("B")
@@ -162,7 +221,7 @@ func CheckQuadD(x, y int) string {
 	return res.String()
 }
 
-func CheckQuadE(x, y int) string {
+func QuadE(x, y int) string {
 	if x <= 0 || y <= 0 {
 		return ""
 	}
@@ -184,10 +243,14 @@ func CheckQuadE(x, y int) string {
 			isLeftEdge := isFirstCol && row > 1 && row < y
 			isRightEdge := isLastCol && row > 1 && row < y
 
-			if isTopLeft || isBottomRight {
+			if isTopLeft {
 				res.WriteString("A")
-			} else if isTopRight || isBottomLeft {
+			} else if isTopRight {
 				res.WriteString("C")
+			} else if isBottomLeft {
+				res.WriteString("C")
+			} else if isBottomRight {
+				res.WriteString("A")
 			} else if isTopEdge || isBottomEdge || isLeftEdge || isRightEdge {
 				res.WriteString("B")
 			} else {
@@ -200,54 +263,3 @@ func CheckQuadE(x, y int) string {
 }
 
 // --- Main Execution ---
-
-func main() {
-	// 1. Read input from the pipe
-	reader := bufio.NewReader(os.Stdin)
-	inputBytes, _ := io.ReadAll(reader)
-	input := string(inputBytes)
-
-	if input == "" {
-		fmt.Println("Not a quad function")
-		return
-	}
-
-	// 2. Determine dimensions
-	lines := strings.Split(strings.TrimSuffix(input, "\n"), "\n")
-	y := len(lines)
-	x := 0
-	if y > 0 {
-		x = len(lines[0])
-	}
-
-	if x == 0 || y == 0 {
-		fmt.Println("Not a quad function")
-		return
-	}
-
-	// 3. Compare input against our internal string generators
-	var matches []string
-
-	if input == CheckQuadA(x, y) {
-		matches = append(matches, fmt.Sprintf("[quadA] [%d] [%d]", x, y))
-	}
-	if input == CheckQuadB(x, y) {
-		matches = append(matches, fmt.Sprintf("[quadB] [%d] [%d]", x, y))
-	}
-	if input == CheckQuadC(x, y) {
-		matches = append(matches, fmt.Sprintf("[quadC] [%d] [%d]", x, y))
-	}
-	if input == CheckQuadD(x, y) {
-		matches = append(matches, fmt.Sprintf("[quadD] [%d] [%d]", x, y))
-	}
-	if input == CheckQuadE(x, y) {
-		matches = append(matches, fmt.Sprintf("[quadE] [%d] [%d]", x, y))
-	}
-
-	// 4. Print results
-	if len(matches) == 0 {
-		fmt.Println("Not a quad function")
-	} else {
-		fmt.Println(strings.Join(matches, " || "))
-	}
-}
