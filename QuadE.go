@@ -1,16 +1,8 @@
-package main
-
-import (
-	"fmt"
-	"os"
-	"strconv"
-)
-
-func QuadE(x, y int) {
+func CheckQuadE(x, y int) string {
 	if x <= 0 || y <= 0 {
-		return
+		return ""
 	}
-
+	var res strings.Builder
 	for row := 1; row <= y; row++ {
 		for col := 1; col <= x; col++ {
 			isFirstRow := row == 1
@@ -29,34 +21,20 @@ func QuadE(x, y int) {
 			isRightEdge := isLastCol && row > 1 && row < y
 
 			if isTopLeft {
-				fmt.Print("A")
+				res.WriteString("A")
 			} else if isTopRight {
-				fmt.Print("C")
+				res.WriteString("C")
 			} else if isBottomLeft {
-				fmt.Print("C")
+				res.WriteString("C")
 			} else if isBottomRight {
-				fmt.Print("A")
-			} else if isTopEdge || isBottomEdge {
-				fmt.Print("B")
-			} else if isLeftEdge || isRightEdge {
-				fmt.Print("B")
+				res.WriteString("A")
+			} else if isTopEdge || isBottomEdge || isLeftEdge || isRightEdge {
+				res.WriteString("B")
 			} else {
-				fmt.Print(" ")
+				res.WriteString(" ")
 			}
 		}
-		fmt.Println()
+		res.WriteString("\n")
 	}
-}
-
-func main() {
-	if len(os.Args) != 3 {
-		return
-	}
-
-	x, err1 := strconv.Atoi(os.Args[1])
-	y, err2 := strconv.Atoi(os.Args[2])
-
-	if err1 == nil && err2 == nil {
-		QuadE(x, y)
-	}
+	return res.String()
 }
