@@ -1,24 +1,188 @@
 package piscine
 
-func SortListInsert(l *NodeI, data_ref int) *NodeI {
-	newNode := &NodeI{Data: data_ref}
-
-	if l == nil {
-		return newNode
+func BTreeApplyByLevel(root *TreeNode, f func(...interface{}) (int, error)) {
+	if root == nil {
+		return
 	}
 
-	if data_ref <= l.Data {
-		newNode.Next = l
-		return newNode
+	queue := []*TreeNode{root}
+
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+
+		f(current.Data)
+
+		if current.Left != nil {
+			queue = append(queue, current.Left)
+		}
+
+		if current.Right != nil {
+			queue = append(queue, current.Right)
+		}
+	}
+}
+
+
+
+package piscine
+
+func BTreeApplyInorder(root *TreeNode, f func(...interface{}) (int, error)) {
+	if root == nil {
+		return
 	}
 
-	current := l
-	for current.Next != nil && current.Next.Data < data_ref {
-		current = current.Next
+	BTreeApplyInorder(root.Left, f)
+	f(root.Data)
+	BTreeApplyInorder(root.Right, f)
+}
+
+
+
+
+package piscine
+
+func BTreeApplyPostorder(root *TreeNode, f func(...interface{}) (int, error)) {
+	if root == nil {
+		return
 	}
 
-	newNode.Next = current.Next
-	current.Next = newNode
+	BTreeApplyPostorder(root.Left, f)
+	BTreeApplyPostorder(root.Right, f)
+	f(root.Data)
+}
 
-	return l
+
+
+package piscine
+
+func BTreeApplyPreorder(root *TreeNode, f func(...interface{}) (int, error)) {
+	if root == nil {
+		return
+	}
+
+	f(root.Data)
+	BTreeApplyPreorder(root.Left, f)
+	BTreeApplyPreorder(root.Right, f)
+}
+
+
+
+package piscine
+
+type TreeNode struct {
+	Left, Right, Parent *TreeNode
+	Data                string
+}
+
+func BTreeInsertData(root *TreeNode, data string) *TreeNode {
+	if root == nil {
+		return &TreeNode{Data: data}
+	}
+
+	if data < root.Data {
+		if root.Left == nil {
+			root.Left = &TreeNode{Data: data, Parent: root}
+		} else {
+			BTreeInsertData(root.Left, data)
+		}
+	} else if data > root.Data {
+		if root.Right == nil {
+			root.Right = &TreeNode{Data: data, Parent: root}
+		} else {
+			BTreeInsertData(root.Right, data)
+		}
+	}
+
+	return root
+}
+
+
+
+
+package piscine
+
+func BTreeIsBinary(root *TreeNode) bool {
+	var isBinaryHelper func(node *TreeNode, min, max *string) bool
+
+	isBinaryHelper = func(node *TreeNode, min, max *string) bool {
+		if node == nil {
+			return true
+		}
+
+		if min != nil && node.Data <= *min {
+			return false
+		}
+
+		if max != nil && node.Data >= *max {
+			return false
+		}
+
+		return isBinaryHelper(node.Left, min, &node.Data) &&
+			isBinaryHelper(node.Right, &node.Data, max)
+	}
+
+	return isBinaryHelper(root, nil, nil)
+}
+
+
+
+
+package piscine
+
+func BTreeLevelCount(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	left := BTreeLevelCount(root.Left)
+	right := BTreeLevelCount(root.Right)
+	if left > right {
+		return left + 1
+	}
+	return right + 1
+}
+
+
+
+
+package piscine
+
+func BTreeMax(root *TreeNode) *TreeNode {
+	if root == nil || root.Right == nil {
+		return root
+	}
+	return BTreeMax(root.Right)
+}
+
+
+
+package piscine
+
+func BTreeMin(root *TreeNode) *TreeNode {
+	if root == nil || root.Left == nil {
+		return root
+	}
+
+	return BTreeMin(root.Left)
+}
+
+
+
+
+package piscine
+
+func BTreeSearchItem(root *TreeNode, elem string) *TreeNode {
+	if root == nil {
+		return nil
+	}
+
+	if elem == root.Data {
+		return root
+	}
+
+	if elem < root.Data {
+		return BTreeSearchItem(root.Left, elem)
+	}
+
+	return BTreeSearchItem(root.Right, elem)
 }
