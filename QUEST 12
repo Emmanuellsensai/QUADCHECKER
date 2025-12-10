@@ -1,36 +1,43 @@
 package piscine
 
-func ListForEach(l *List, f func(*NodeL)) {
+func IsPositiveNode(node *NodeL) bool {
+	switch node.Data.(type) {
+	case int:
+		return node.Data.(int) > 0
+	case float32:
+		return node.Data.(float32) > 0
+	case float64:
+		return node.Data.(float64) > 0
+	case byte:
+		return node.Data.(byte) > 0
+	default:
+		return false
+	}
+}
+
+func IsAlNode(node *NodeL) bool {
+	switch node.Data.(type) {
+	case int, float32, float64, byte:
+		return false
+	default:
+		return true
+	}
+}
+
+func ListForEachIf(l *List, f func(*NodeL), cond func(*NodeL) bool) {
 	if l == nil {
 		return
 	}
 
 	current := l.Head
 	for current != nil {
-		f(current)
+		if cond(current) {
+			f(current)
+		}
 		current = current.Next
 	}
 }
 
-// Function to add 2 (to int) or "2" (to string)
-func Add2_node(node *NodeL) {
-	switch node.Data.(type) {
-	case int:
-		node.Data = node.Data.(int) + 2
-	case string:
-		node.Data = node.Data.(string) + "2"
-	}
-}
-
-// Function to subtract 3 (from int) or append "-3" (to string)
-func Subtract3_node(node *NodeL) {
-	switch node.Data.(type) {
-	case int:
-		node.Data = node.Data.(int) - 3
-	case string:
-		node.Data = node.Data.(string) + "-3"
-	}
-}
 
 
 package piscine
